@@ -1,0 +1,87 @@
+.chat-box {
+  width: 80%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  height: 80vh; /* Adjust as needed */
+}
+
+.illustrate-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-container {
+  display: flex;
+  margin: 10px 0;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.bubble-left {
+  justify-content: flex-start;
+}
+
+.input-right {
+  justify-content: flex-end;
+}
+
+.bubble, .input-chat {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  max-width: 60%;
+  width: fit-content;
+}
+
+.bubble {
+  background-color: #e0f7fa;
+  border-color: #b2ebf2;
+  align-self: flex-start;
+}
+
+.input-chat {
+  background-color: #ffecb3;
+  border-color: #ffe082;
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+}
+
+input {
+  width: calc(100% - 40px);
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.send-button {
+  padding: 10px;
+  margin-left: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.send-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+video {
+  max-width: 100%;
+  height: auto;
+}

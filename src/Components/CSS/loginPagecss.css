@@ -1,0 +1,16 @@
+/* .container{
+    display: flex;
+    
+} */
+.formTable{
+    display: flex;
+    flex-direction: column;
+}
+ .formTable button{
+    width: 10rem;
+}
+#buttonsubmit{
+        width: 6rem;
+    margin-left: 37rem;
+    margin-top: 0rem;
+}
