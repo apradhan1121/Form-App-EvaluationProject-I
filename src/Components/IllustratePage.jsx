@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './CSS/IllustratePage.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://form-app-server-evaluationproject-i.onrender.com';
 function IllustratePage() {
   const { formId } = useParams();
   const [formElements, setFormElements] = useState([]);
