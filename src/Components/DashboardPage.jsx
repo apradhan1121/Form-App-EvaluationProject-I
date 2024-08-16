@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderPlus, faPlusCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import './CSS/DashboardPage.css';
 
+const API_URL = 'https://form-app-server-evaluationproject-i.onrender.com';
 function DashboardPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userName, setUserName] = useState('');
@@ -20,7 +21,7 @@ function DashboardPage() {
             return;
         }
 
-        axios.get('http://localhost:5000/verifyToken', {
+        axios.get(`${API_URL}/verifyToken`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -42,7 +43,7 @@ function DashboardPage() {
     }, [navigate]);
 
     const fetchForms = (token) => {
-        axios.get('http://localhost:5000/forms', {
+        axios.get(`${API_URL}/forms`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

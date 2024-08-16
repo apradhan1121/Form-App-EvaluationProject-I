@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './CSS/IllustratePage.css';
 
+const API_URL = 'http://localhost:5000';
 function IllustratePage() {
   const { formId } = useParams();
   const [formElements, setFormElements] = useState([]);
@@ -10,29 +11,30 @@ function IllustratePage() {
   const [userInputs, setUserInputs] = useState({});
   const [isWaitingForInput, setIsWaitingForInput] = useState(false);
   const [responseData, setResponseData] = useState(null);
-  const [hasStarted, setHasStarted] = useState(false); // Track if interaction has started
-  const [interactions, setInteractions] = useState([]); // Track all interactions
+  const [hasStarted, setHasStarted] = useState(false);
+  const [interactions, setInteractions] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
+    console.log("illustrate page: useffect-1")
     const fetchFormElements = async () => {
       try {
-        const localStorageFormElements = JSON.parse(localStorage.getItem(formId));
+        // const localStorageFormElements = JSON.parse(localStorage.getItem(formId));
+        const localStorageFormElements = null;
 
         if (localStorageFormElements) {
           setFormElements(localStorageFormElements);
         } else {
-          // Token-based authentication is always true since URL is public
-          const response = await axios.get(`http://localhost:5000/forms/${formId}`);
+          // console.log("calling the http://localhost:5000/forms/${formId} in 1 ")
+          const response = await axios.get(`${API_URL}/forms/${formId}`);
+          // console.log("response fetched in 1:",response)
           if (response.data.status === 'SUCCESS') {
-            console.log("Fetched form elements from the DB:", response.data.form.elements);
             setFormElements(response.data.form.elements);
             localStorage.setItem(formId, JSON.stringify(response.data.form.elements));
           }
         }
-
-        // Increment view count when the page first loads
-        await axios.post(`http://localhost:5000/forms/${formId}/increment-view`);
+        console.log('calling the http://localhost:5000/forms/${formId}/increment-view in 1')
+        await axios.post(`${API_URL}/forms/${formId}/increment-view`);
       } catch (error) {
         console.error('Error fetching form elements:', error);
       }
@@ -42,6 +44,7 @@ function IllustratePage() {
   }, [formId]);
 
   useEffect(() => {
+    console.log("illustrate page: useffect-2")
     const proceedToNextElement = () => {
       if (currentElementIndex < formElements.length) {
         const currentElement = formElements[currentElementIndex];
@@ -49,23 +52,26 @@ function IllustratePage() {
           setIsWaitingForInput(true);
         } else {
           setIsWaitingForInput(false);
-          setCurrentElementIndex(currentElementIndex + 1);
+          setTimeout(() => {
+            setCurrentElementIndex(currentElementIndex + 1);
+          }, 3000); // 3-second delay for bot messages
         }
       }
     };
 
     if (!isWaitingForInput && currentElementIndex < formElements.length) {
-      const timer = setTimeout(proceedToNextElement, 2000);
-      return () => clearTimeout(timer);
+      proceedToNextElement();
     }
   }, [currentElementIndex, formElements, isWaitingForInput]);
 
   useEffect(() => {
+    console.log("illustrate page: useffect-3")
     const fetchResponseData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/forms/${formId}/responses`);
+      try { 
+        console.log("calling the http://localhost:5000/forms/${formId}/responses in 3")
+        const response = await axios.get(`${API_URL}/forms/${formId}/responses`);
+        console.log("Responses fetched in 3:",response)
         if (response.data.status === 'SUCCESS') {
-          console.log("Fetched response data:", response.data);
           setResponseData(response.data);
         }
       } catch (error) {
@@ -87,7 +93,7 @@ function IllustratePage() {
     if (userInputs[currentElementIndex]) {
       try {
         if (!hasStarted) {
-          await axios.post(`http://localhost:5000/forms/${formId}/increment-start`);
+          await axios.post(`${API_URL}/forms/${formId}/increment-start`);
           setHasStarted(true);
         }
 
@@ -98,13 +104,11 @@ function IllustratePage() {
         };
 
         setInteractions([...interactions, newInteraction]);
-        console.log("Sending each interaction to backend", newInteraction);
 
-        await axios.post(`http://localhost:5000/forms/${formId}/interactions`, { interaction: newInteraction });
+        await axios.post(`${API_URL}/forms/${formId}/interactions`, { interaction: newInteraction });
 
         setIsWaitingForInput(false);
         setCurrentElementIndex(currentElementIndex + 1);
-        setUserInputs({ ...userInputs, [currentElementIndex]: '' }); // Clear input field after send
       } catch (error) {
         console.error('Error saving user input:', error);
       }
@@ -114,7 +118,7 @@ function IllustratePage() {
   const handleButtonClick = async () => {
     try {
       if (!hasStarted) {
-        await axios.post(`http://localhost:5000/forms/${formId}/increment-start`);
+        await axios.post(`${API_URL}/forms/${formId}/increment-start`);
         setHasStarted(true);
       }
 
@@ -126,7 +130,7 @@ function IllustratePage() {
 
       setInteractions([...interactions, newInteraction]);
 
-      await axios.post(`http://localhost:5000/forms/${formId}/interactions`, newInteraction);
+      await axios.post(`${API_URL}/forms/${formId}/interactions`, newInteraction);
 
       setIsWaitingForInput(false);
       setCurrentElementIndex(currentElementIndex + 1);
@@ -136,14 +140,15 @@ function IllustratePage() {
   };
 
   useEffect(() => {
-    if (currentElementIndex >= formElements.length && !isCompleted) {
+    console.log("useeffect-4 and currentElementIndex and formElements.length & isCompleted",currentElementIndex, formElements.length,isCompleted)
+    if (currentElementIndex+1 == formElements.length && !isCompleted) {
       const submitInteractions = async () => {
         try {
-          console.log("Form is completed... Calling complete api");
-          await axios.post(`http://localhost:5000/forms/${formId}/complete`, {
+          console.log("Calling the complete axios operation")
+          await axios.post(`${API_URL}/forms/${formId}/complete`, {
             interactions: interactions
           });
-          setIsCompleted(true); // Set the flag to true after completion
+          setIsCompleted(true);
         } catch (error) {
           console.error('Error marking form as completed:', error);
         }
@@ -161,10 +166,10 @@ function IllustratePage() {
   return (
     <div className="chat-box">
       <div className="illustrate-container">
-        {formElements.slice(0, currentElementIndex + 1).map((element, index) => (
+        {formElements.slice(0, currentElementIndex).map((element, index) => (
           <div
             key={index}
-            className={`chat-container ${['Btext', 'Image', 'Video', 'GIF'].includes(element.type.split(' ')[0]) ? 'bubble-left' : 'input-right'}`}
+            className={`chat-container ${['Btext', 'Image', 'Video', 'GIF'].includes(element.type.split(' ')[0]) ? 'bubble-left' : 'bubble-right'}`}
           >
             {['Btext', 'Image', 'Video', 'GIF'].includes(element.type.split(' ')[0]) && (
               <div className="bubble bubble-left">
@@ -174,22 +179,13 @@ function IllustratePage() {
                 {element.type.split(' ')[0] === 'GIF' && <img src={element.content} alt="Media" />}
               </div>
             )}
-            {['Number', 'Email', 'Phone', 'Date', 'Rating', 'Itext'].includes(element.type.split(' ')[0]) && index === currentElementIndex && (
-              <div className="input-chat">
-                <input
-                  type={element.type.split(' ')[0] === 'Phone' ? 'tel' : element.type.split(' ')[0] === 'Date' ? 'date' : 'text'}
-                  placeholder={`Enter ${element.type.split(' ')[0]}`}
-                  value={userInputs[currentElementIndex] || ''}
-                  onChange={handleInputChange}
-                  disabled={!isWaitingForInput}
-                />
-                <button className="send-button" onClick={handleSendClick} disabled={!userInputs[currentElementIndex]}>
-                  →
-                </button>
+            {['Number', 'Email', 'Phone', 'Date', 'Rating', 'Itext'].includes(element.type.split(' ')[0]) && (
+              <div className="bubble bubble-right">
+                {userInputs[index] || element.content}
               </div>
             )}
             {element.type.split(' ')[0] === 'Button' && (
-              <div className="input-chat">
+              <div className="bubble bubble-right">
                 <button className="button-chat" onClick={handleButtonClick} disabled={index !== currentElementIndex}>
                   {element.content}
                 </button>
@@ -197,6 +193,20 @@ function IllustratePage() {
             )}
           </div>
         ))}
+        {currentElement && ['Number', 'Email', 'Phone', 'Date', 'Rating', 'Itext'].includes(currentElement.type.split(' ')[0]) && (
+          <div className="input-chat">
+            <input
+              type={currentElement.type.split(' ')[0] === 'Phone' ? 'tel' : currentElement.type.split(' ')[0] === 'Date' ? 'date' : 'text'}
+              placeholder={`Enter ${currentElement.type.split(' ')[0]}`}
+              value={userInputs[currentElementIndex] || ''}
+              onChange={handleInputChange}
+              disabled={!isWaitingForInput}
+            />
+            <button className="send-button" onClick={handleSendClick} disabled={!userInputs[currentElementIndex]}>
+              →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

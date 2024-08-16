@@ -4,6 +4,7 @@ import axios from 'axios';
 import './CSS/FormBuilderPage.css';
 import removeIcon from '../assets/delete.png'; // Import the remove icon
 
+const API_URL = 'https://form-app-server-evaluationproject-i.onrender.com';
 function FormBuilderPage() {
   const [elements, setElements] = useState([{ type: 'Start', content: 'Start' }]);
   const [publicUrl, setPublicUrl] = useState('');
@@ -27,7 +28,7 @@ function FormBuilderPage() {
       return;
     }
 
-    axios.get('http://localhost:5000/verifyToken', {
+    axios.get(`${API_URL}/verifyToken`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -45,7 +46,7 @@ function FormBuilderPage() {
     });
 
     if (formId) {
-      axios.get(`http://localhost:5000/forms/${formId}`, {
+      axios.get(`${API_URL}/forms/${formId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -118,7 +119,7 @@ function FormBuilderPage() {
     //Checking if the form is new or existing
     if (formId) {
       console.log("Updating the existing form");
-      axios.put(`http://localhost:5000/forms/${formId}`, formData, {
+      axios.put(`${API_URL}/forms/${formId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -137,7 +138,7 @@ function FormBuilderPage() {
       });
     } else {
       console.log("Calling the backend /form api to save the new form in the db");
-      axios.post('http://localhost:5000/forms', formData, {
+      axios.post(`${API_URL}/forms`, formData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -146,6 +147,7 @@ function FormBuilderPage() {
         if (response.data.status === 'SUCCESS') {
           const newFormId = response.data.form._id;
           setPublicUrl(`${window.location.origin}/illustrate/${newFormId}`);
+          // setPublicUrl(`/illustrate/${newFormId}`);
           setShowPrompt(false);
         } else {
           console.error('Failed to save form:', response.data.message);

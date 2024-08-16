@@ -25,10 +25,13 @@
 
 .bubble-left {
   justify-content: flex-start;
+  transition-delay: 2000ms;
 }
 
-.input-right {
+.bubble-right {
   justify-content: flex-end;
+  align-self: flex-end;
+  transition-delay: 2000ms;
 }
 
 .bubble, .input-chat {
@@ -37,20 +40,31 @@
   border-radius: 5px;
   max-width: 60%;
   width: fit-content;
+  transition-delay: 2000ms;
 }
 
 .bubble {
   background-color: #e0f7fa;
   border-color: #b2ebf2;
-  align-self: flex-start;
 }
 
 .input-chat {
   background-color: #ffecb3;
   border-color: #ffe082;
-  align-self: flex-end;
   display: flex;
   align-items: center;
+  width: 10rem;
+  align-self: flex-end;
+}
+
+.bubble-left .bubble {
+  align-self: flex-start;
+  width: 10rem;
+}
+
+.bubble-right .bubble {
+  align-self: flex-end;
+  width: 10rem;
 }
 
 input {

@@ -3,6 +3,7 @@ import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
+const API_URL = 'https://form-app-server-evaluationproject-i.onrender.com';
 function RegisterPage() {
   const [fname,setFirstName] = useState('');
   const [lname,setLastName] = useState('');
@@ -13,36 +14,6 @@ function RegisterPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  /* const handleSubmit = (event) => {
-    event.preventDefault();
-  
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-  
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'http://localhost:5000/User/signup';
-  
-    const fields = {
-      username,
-      email,
-      password
-    };
-  
-    for (const [key, value] of Object.entries(fields)) {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = value;
-      form.appendChild(input);
-    }
-  
-    document.body.appendChild(form);
-    form.submit();
-  }; */
-  
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -53,7 +24,7 @@ function RegisterPage() {
   
     try {
       // Send POST request with axios
-      const response = await axios.post("http://localhost:5000/User/signup", {
+      const response = await axios.post(`${API_URL}/User/signup`, {
         fname,
         lname,
         username,
